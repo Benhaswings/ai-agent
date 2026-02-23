@@ -1,0 +1,9 @@
+{
+  "id": "job-1771844475724-82o8lrlgv",
+  "type": "chat",
+  "prompt": "Search the weather in 94563",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T11:01:15.724Z",
+  "status": "pending"
+}
