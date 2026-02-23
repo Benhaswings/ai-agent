@@ -1,0 +1,9 @@
+{
+  "id": "job-1771845077454-1umcxyraz",
+  "type": "chat",
+  "prompt": "Are you able to create a rssfeed?",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T11:11:17.455Z",
+  "status": "pending"
+}
