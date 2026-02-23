@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { webSearch } = require('./websearch');
 
 // Telegram notification setup
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -149,8 +150,30 @@ async function handleCode(job) {
 }
 
 async function handleResearch(job) {
-  // Research task - would integrate with web search
-  return `Research task: ${job.prompt}\n\n[Web search integration would go here]`;
+  // Web search + AI summary
+  console.log(`Searching web for: ${job.prompt}`);
+  const searchResults = await webSearch(job.prompt, 5);
+  
+  console.log('Search complete, summarizing with AI...');
+  
+  // Have AI summarize the search results
+  const summaryPrompt = `You are a helpful research assistant. Based on the following web search results, provide a comprehensive answer to the user's question.
+
+User's Question: "${job.prompt}"
+
+Web Search Results:
+${searchResults}
+
+Instructions:
+- Synthesize the information from the search results
+- Provide a clear, accurate answer
+- Cite sources when possible (mention which result number)
+- If results are insufficient, say so honestly
+- Keep your response concise but informative
+
+Your Answer:`;
+
+  return handleChat({ ...job, prompt: summaryPrompt });
 }
 
 async function handleFileOp(job) {

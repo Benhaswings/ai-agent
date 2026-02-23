@@ -551,6 +551,9 @@ if (bot && TELEGRAM_CHAT_ID) {
             `/smart - Use reasoning model (qwen)\n` +
             `/tiny - Use lightning fast model\n` +
             `/default - Reset to default\n\n` +
+            `*Web Search:*\n` +
+            `/search <query> - Search the web\n` +
+            `Example: /search latest AI news\n\n` +
             `Just type any message to chat!`,
             { parse_mode: 'Markdown' }
           );
@@ -566,6 +569,34 @@ if (bot && TELEGRAM_CHAT_ID) {
           bot.sendMessage(chatId, `✅ Switched to ${modelExists.name}`);
         } else {
           bot.sendMessage(chatId, `❌ Model not found: ${requestedModel}\nUse /models to see available models`);
+        }
+        return;
+      }
+      
+      // Search command
+      if ((command === '/search' || command === '/web') && text.split(' ').length > 1) {
+        const searchQuery = text.replace(/^\/\w+\s*/, '').trim();
+        const jobId = `job-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const job = {
+          id: jobId,
+          type: 'research',
+          prompt: searchQuery,
+          model: userModels[chatId] || 'llama3.2',
+          source: 'telegram',
+          createdAt: new Date().toISOString(),
+          status: 'pending'
+        };
+        
+        const jobPath = path.join(__dirname, '..', 'jobs', 'pending', `${jobId}.json`);
+        fs.writeFileSync(jobPath, JSON.stringify(job, null, 2));
+        
+        try {
+          execSync('git add jobs/pending/');
+          execSync(`git commit -m "Search job: ${jobId}"`);
+          execSync('git push');
+          bot.sendMessage(chatId, `🔍 Searching: "${searchQuery.substring(0, 50)}${searchQuery.length > 50 ? '...' : ''}"`, { parse_mode: 'Markdown' });
+        } catch (error) {
+          bot.sendMessage(chatId, `❌ Failed: ${error.message}`);
         }
         return;
       }
