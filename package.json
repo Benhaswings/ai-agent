@@ -7,6 +7,14 @@
     "agent": "cd agent && npm install && node run.js",
     "setup": "node scripts/setup.js"
   },
-  "keywords": ["ai", "agent", "github-actions", "autonomous"],
-  "license": "MIT"
+  "keywords": [
+    "ai",
+    "agent",
+    "github-actions",
+    "autonomous"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.67.0"
+  }
 }

@@ -10,6 +10,28 @@ const PORT = process.env.PORT || 3000;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPO = process.env.GITHUB_REPO || 'YOURNAME/github-agent';
 
+// Telegram notifications
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+let bot = null;
+
+if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
+  try {
+    const TelegramBot = require('node-telegram-bot-api');
+    bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: false });
+    console.log('✅ Telegram notifications enabled');
+  } catch (e) {
+    console.log('⚠️ Telegram bot not available:', e.message);
+  }
+}
+
+function notifyTelegram(message) {
+  if (bot && TELEGRAM_CHAT_ID) {
+    bot.sendMessage(TELEGRAM_CHAT_ID, message, { parse_mode: 'Markdown' })
+      .catch(err => console.error('Telegram error:', err.message));
+  }
+}
+
 // Create a new job
 app.post('/job', async (req, res) => {
   const { type, prompt, model, priority } = req.body;
@@ -38,6 +60,9 @@ app.post('/job', async (req, res) => {
     execSync('git add jobs/pending/');
     execSync(`git commit -m "New job: ${jobId}"`);
     execSync('git push');
+    
+    // Notify Telegram
+    notifyTelegram(`🤖 *New Job Submitted*\n\nType: ${type}\nPrompt: ${prompt.substring(0, 100)}...\n\nJob ID: \`${jobId}\``);
     
     res.json({ 
       success: true, 
@@ -170,7 +195,24 @@ app.get('/', (req, res) => {
   `);
 });
 
+// Telegram notification endpoint (for agent to call)
+app.post('/notify', (req, res) => {
+  const { message, jobId, status } = req.body;
+  
+  let emoji = '🤖';
+  if (status === 'completed') emoji = '✅';
+  if (status === 'failed') emoji = '❌';
+  
+  const fullMessage = `${emoji} *Job ${status || 'Update'}*\n\n${message || ''}\n\nJob ID: \`${jobId || 'unknown'}\``;
+  notifyTelegram(fullMessage);
+  
+  res.json({ success: true });
+});
+
 app.listen(PORT, () => {
   console.log(`Event handler running on http://localhost:${PORT}`);
   console.log(`GitHub repo: ${REPO}`);
+  if (bot) {
+    console.log(`Telegram bot: @KiloZuluLoboBot`);
+  }
 });

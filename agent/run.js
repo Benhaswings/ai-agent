@@ -2,6 +2,27 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+// Telegram notification setup
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+let bot = null;
+
+if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
+  try {
+    const TelegramBot = require('node-telegram-bot-api');
+    bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: false });
+  } catch (e) {
+    // Bot module not available, will use fallback
+  }
+}
+
+function notifyTelegram(message) {
+  if (bot && TELEGRAM_CHAT_ID) {
+    bot.sendMessage(TELEGRAM_CHAT_ID, message, { parse_mode: 'Markdown' })
+      .catch(err => console.error('Telegram error:', err.message));
+  }
+}
+
 // Load job
 const JOB_ID = process.argv[2];
 if (!JOB_ID) {
@@ -15,6 +36,9 @@ const job = JSON.parse(fs.readFileSync(jobPath, 'utf8'));
 console.log(`Processing job: ${JOB_ID}`);
 console.log(`Type: ${job.type}`);
 console.log(`Prompt: ${job.prompt}`);
+
+// Notify job started
+notifyTelegram(`🔄 *Job Started*\n\nType: ${job.type}\nPrompt: ${job.prompt.substring(0, 100)}...\n\nJob ID: \`${JOB_ID}\``);
 
 // Agent capabilities
 async function runAgent() {
@@ -62,6 +86,10 @@ async function runAgent() {
     console.log(`Job completed: ${JOB_ID}`);
     console.log(`Duration: ${completedJob.duration}ms`);
     
+    // Notify completion
+    const resultPreview = typeof result === 'string' ? result.substring(0, 200) : 'Complex result';
+    notifyTelegram(`✅ *Job Completed*\n\nType: ${job.type}\nDuration: ${completedJob.duration}ms\n\nResult:\n\`\`\`${resultPreview.substring(0, 150)}...\`\`\`\n\nJob ID: \`${JOB_ID}\``);
+    
   } catch (error) {
     console.error(`Job failed: ${JOB_ID}`, error);
     
@@ -75,6 +103,9 @@ async function runAgent() {
     const failedPath = path.join(__dirname, '..', 'jobs', 'failed', `${JOB_ID}.json`);
     fs.writeFileSync(failedPath, JSON.stringify(failedJob, null, 2));
     fs.unlinkSync(jobPath);
+    
+    // Notify failure
+    notifyTelegram(`❌ *Job Failed*\n\nType: ${job.type}\nError: ${error.message.substring(0, 100)}\n\nJob ID: \`${JOB_ID}\``);
     
     process.exit(1);
   }
