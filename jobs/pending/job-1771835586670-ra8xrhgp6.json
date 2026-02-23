@@ -1,0 +1,9 @@
+{
+  "id": "job-1771835586670-ra8xrhgp6",
+  "type": "chat",
+  "prompt": "does this run for free",
+  "model": "llama3.2",
+  "priority": "normal",
+  "createdAt": "2026-02-23T08:33:06.670Z",
+  "status": "pending"
+}
