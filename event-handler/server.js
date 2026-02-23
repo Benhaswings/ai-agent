@@ -4,6 +4,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 const { subscribe, unsubscribe, listSubscriptions, checkAllFeeds } = require('./agent/rss');
 const { checkDHSRSS, manualCheck, DHS_CHANNEL } = require('./agent/dhs-rss');
+const { checkBreitbartRSS, manualCheckBreitbart, BREITBART_CHANNEL } = require('./agent/breitbart-rss');
 
 const app = express();
 app.use(express.json());
@@ -44,6 +45,19 @@ if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
     
     // Initial check after 1 minute
     setTimeout(checkDHS, 60000);
+    
+    // Start Breitbart RSS checker (check every 3 hours)
+    const checkBreitbart = () => {
+      if (bot) {
+        checkBreitbartRSS(bot).catch(console.error);
+      }
+    };
+    
+    setInterval(checkBreitbart, 3 * 60 * 60 * 1000);
+    console.log('✅ Breitbart RSS checker started (DHS/CBP/FBI/Homeland Security filter)');
+    
+    // Initial check after 2 minutes
+    setTimeout(checkBreitbart, 120000);
   } catch (e) {
     console.log('⚠️ Telegram bot not available:', e.message);
   }
@@ -620,7 +634,8 @@ if (bot && TELEGRAM_CHAT_ID) {
             `/rss <url> - Subscribe to RSS feed\n` +
             `/rsslist - List your subscriptions\n` +
             `/unrss <number> - Unsubscribe from feed\n` +
-            `/dhs - Check DHS press releases manually\n\n` +
+            `/dhs - Check DHS press releases manually\n` +
+            `/breitbart - Check Breitbart DHS/CBP/FBI articles\n\n` +
             `Just type any message to chat!`,
             { parse_mode: 'Markdown' }
           );
@@ -702,6 +717,12 @@ if (bot && TELEGRAM_CHAT_ID) {
       // DHS RSS command
       if (command === '/dhs') {
         manualCheck(bot, chatId);
+        return;
+      }
+      
+      // Breitbart RSS command
+      if (command === '/breitbart') {
+        manualCheckBreitbart(bot, chatId);
         return;
       }
       
