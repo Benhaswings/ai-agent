@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const { subscribe, unsubscribe, listSubscriptions, checkAllFeeds } = require('./agent/rss');
+const { checkDHSRSS, manualCheck, DHS_CHANNEL } = require('./agent/dhs-rss');
 
 const app = express();
 app.use(express.json());
@@ -29,6 +30,21 @@ if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
       }
     }, 5 * 60 * 1000);
     console.log('✅ RSS feed checker started (checking every 5 minutes)');
+    
+    // Start DHS RSS checker (check every 10 minutes)
+    setInterval(() => {
+      if (bot) {
+        checkDHSRSS(bot).catch(console.error);
+      }
+    }, 10 * 60 * 1000);
+    console.log('✅ DHS RSS checker started (checking every 10 minutes)');
+    
+    // Initial check after 30 seconds
+    setTimeout(() => {
+      if (bot) {
+        checkDHSRSS(bot).catch(console.error);
+      }
+    }, 30000);
   } catch (e) {
     console.log('⚠️ Telegram bot not available:', e.message);
   }
@@ -601,6 +617,11 @@ if (bot && TELEGRAM_CHAT_ID) {
             `*Web Search:*\n` +
             `/search <query> - Search the web\n` +
             `Example: /search latest AI news\n\n` +
+            `*RSS Feeds:*\n` +
+            `/rss <url> - Subscribe to RSS feed\n` +
+            `/rsslist - List your subscriptions\n` +
+            `/unrss <number> - Unsubscribe from feed\n` +
+            `/dhs - Check DHS press releases manually\n\n` +
             `Just type any message to chat!`,
             { parse_mode: 'Markdown' }
           );
@@ -645,6 +666,43 @@ if (bot && TELEGRAM_CHAT_ID) {
         } catch (error) {
           bot.sendMessage(chatId, `❌ Failed: ${error.message}`);
         }
+        return;
+      }
+      
+      // RSS Commands
+      if (command === '/rss' && text.split(' ').length > 1) {
+        const url = text.replace(/^\/\w+\s*/, '').trim();
+        bot.sendMessage(chatId, '📰 Subscribing to RSS feed...');
+        
+        subscribe(chatId, url).then(result => {
+          bot.sendMessage(chatId, result.message, { parse_mode: 'Markdown' });
+        }).catch(err => {
+          bot.sendMessage(chatId, `❌ Error: ${err.message}`);
+        });
+        return;
+      }
+      
+      if (command === '/rsslist') {
+        const result = listSubscriptions(chatId);
+        bot.sendMessage(chatId, result.message, { parse_mode: 'Markdown' });
+        return;
+      }
+      
+      if (command === '/unrss' && text.split(' ').length > 1) {
+        const index = parseInt(text.split(' ')[1]) - 1;
+        if (isNaN(index)) {
+          bot.sendMessage(chatId, '❌ Usage: /unrss <number>\nExample: /unrss 1');
+          return;
+        }
+        
+        const result = unsubscribe(chatId, index);
+        bot.sendMessage(chatId, result.message, { parse_mode: 'Markdown' });
+        return;
+      }
+      
+      // DHS RSS command
+      if (command === '/dhs') {
+        manualCheck(bot, chatId);
         return;
       }
       
