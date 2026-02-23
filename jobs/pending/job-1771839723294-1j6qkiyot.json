@@ -1,0 +1,9 @@
+{
+  "id": "job-1771839723294-1j6qkiyot",
+  "type": "chat",
+  "prompt": "Hows your day",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T09:42:03.294Z",
+  "status": "pending"
+}
