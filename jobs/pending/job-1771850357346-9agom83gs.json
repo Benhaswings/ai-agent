@@ -1,9 +1,0 @@
-{
-  "id": "job-1771850357346-9agom83gs",
-  "type": "chat",
-  "prompt": "Can you do web searches?",
-  "model": "llama3.2",
-  "source": "telegram",
-  "createdAt": "2026-02-23T12:39:17.346Z",
-  "status": "pending"
-}
