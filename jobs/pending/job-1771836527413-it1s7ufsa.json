@@ -1,0 +1,9 @@
+{
+  "id": "job-1771836527413-it1s7ufsa",
+  "type": "chat",
+  "prompt": "Test Telegram notification",
+  "model": "llama3.2",
+  "priority": "normal",
+  "createdAt": "2026-02-23T08:48:47.413Z",
+  "status": "pending"
+}
