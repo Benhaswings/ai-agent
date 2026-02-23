@@ -61,8 +61,8 @@ app.post('/job', async (req, res) => {
     execSync(`git commit -m "New job: ${jobId}"`);
     execSync('git push');
     
-    // Notify Telegram
-    notifyTelegram(`🤖 *New Job Submitted*\n\nType: ${type}\nPrompt: ${prompt.substring(0, 100)}...\n\nJob ID: \`${jobId}\``);
+    // Optional: Notify job queued (comment out to disable)
+    // notifyTelegram(`⏳ Processing: ${prompt.substring(0, 80)}...`);
     
     res.json({ 
       success: true, 

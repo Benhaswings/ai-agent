@@ -37,9 +37,6 @@ console.log(`Processing job: ${JOB_ID}`);
 console.log(`Type: ${job.type}`);
 console.log(`Prompt: ${job.prompt}`);
 
-// Notify job started
-notifyTelegram(`🔄 *Job Started*\n\nType: ${job.type}\nPrompt: ${job.prompt.substring(0, 100)}...\n\nJob ID: \`${JOB_ID}\``);
-
 // Agent capabilities
 async function runAgent() {
   const startTime = Date.now();
@@ -86,9 +83,9 @@ async function runAgent() {
     console.log(`Job completed: ${JOB_ID}`);
     console.log(`Duration: ${completedJob.duration}ms`);
     
-    // Notify completion
-    const resultPreview = typeof result === 'string' ? result.substring(0, 200) : 'Complex result';
-    notifyTelegram(`✅ *Job Completed*\n\nType: ${job.type}\nDuration: ${completedJob.duration}ms\n\nResult:\n\`\`\`${resultPreview.substring(0, 150)}...\`\`\`\n\nJob ID: \`${JOB_ID}\``);
+    // Notify completion - clean response
+    const resultPreview = typeof result === 'string' ? result : 'Complex result';
+    notifyTelegram(resultPreview);
     
   } catch (error) {
     console.error(`Job failed: ${JOB_ID}`, error);
