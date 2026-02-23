@@ -1,9 +1,0 @@
-{
-  "id": "job-1771848976736-iyqi8a49q",
-  "type": "chat",
-  "prompt": "Will adding Claude be good",
-  "model": "llama3.2",
-  "source": "telegram",
-  "createdAt": "2026-02-23T12:16:16.736Z",
-  "status": "pending"
-}
