@@ -1,0 +1,12 @@
+{
+  "id": "job-1771839513331-pnj8ymhny",
+  "type": "chat",
+  "prompt": "Hey",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T09:38:33.331Z",
+  "status": "completed",
+  "result": "How's it going? Is there something I can help you with or would you like to chat?",
+  "completedAt": "2026-02-23T09:41:51.191Z",
+  "duration": 2846
+}
