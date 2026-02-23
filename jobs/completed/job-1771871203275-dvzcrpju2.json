@@ -5,5 +5,7 @@
   "model": "tinyllama",
   "source": "telegram",
   "createdAt": "2026-02-23T18:26:43.275Z",
-  "status": "pending"
+  "status": "completed",
+  "completedAt": "2026-02-23T18:26:47.222Z",
+  "duration": 74
 }
