@@ -1,0 +1,29 @@
+{
+  "defaultModel": "llama3.2",
+  "maxTokens": 4096,
+  "timeout": 300000,
+  "notifications": {
+    "telegram": {
+      "enabled": false,
+      "chatId": ""
+    },
+    "webhook": {
+      "enabled": false,
+      "url": ""
+    }
+  },
+  "models": {
+    "ollama": {
+      "host": "http://localhost:11434",
+      "models": ["llama3.2", "llama3.2:1b", "phi3:mini"]
+    },
+    "anthropic": {
+      "enabled": false,
+      "model": "claude-3-5-sonnet-20241022"
+    },
+    "openai": {
+      "enabled": false,
+      "model": "gpt-4o-mini"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+name: Scheduled Tasks
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # Every 15 minutes
+  workflow_dispatch:
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+    
+    - name: Check for scheduled tasks
+      run: |
+        # Check if there are any scheduled tasks to run
+        echo "Heartbeat check - $(date)"
+        # Could trigger recurring jobs here

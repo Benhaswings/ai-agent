@@ -1,0 +1,79 @@
+name: Run Agent Job
+
+on:
+  push:
+    paths:
+      - 'jobs/pending/**'
+  workflow_dispatch:
+
+jobs:
+  process-job:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: Find and process pending jobs
+      id: process
+      run: |
+        # Find oldest pending job
+        JOB_FILE=$(ls -1 jobs/pending/*.json 2>/dev/null | head -1)
+        if [ -z "$JOB_FILE" ]; then
+          echo "No pending jobs"
+          exit 0
+        fi
+        
+        echo "Processing: $JOB_FILE"
+        echo "job_file=$JOB_FILE" >> $GITHUB_OUTPUT
+        
+        # Move to processing
+        mv "$JOB_FILE" jobs/processing/
+        JOB_ID=$(basename "$JOB_FILE" .json)
+        echo "job_id=$JOB_ID" >> $GITHUB_OUTPUT
+    
+    - name: Install agent dependencies
+      if: steps.process.outputs.job_id
+      run: |
+        cd agent
+        npm install
+    
+    - name: Run agent
+      if: steps.process.outputs.job_id
+      env:
+        JOB_ID: ${{ steps.process.outputs.job_id }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        OLLAMA_HOST: ${{ secrets.OLLAMA_HOST }}
+      run: |
+        cd agent
+        node run.js "$JOB_ID"
+    
+    - name: Commit results
+      if: steps.process.outputs.job_id
+      run: |
+        git config user.name "GitHub Agent"
+        git config user.email "agent@github.com"
+        git add -A
+        git commit -m "Agent completed job: ${{ steps.process.outputs.job_id }}" || true
+        git push
+    
+    - name: Notify completion
+      if: steps.process.outputs.job_id && failure()
+      run: |
+        # Move failed job
+        mv jobs/processing/${{ steps.process.outputs.job_id }}.json jobs/failed/ || true
+        git add -A
+        git commit -m "Agent FAILED job: ${{ steps.process.outputs.job_id }}" || true
+        git push
