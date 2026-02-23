@@ -1,9 +1,0 @@
-{
-  "id": "job-1771850597887-2z23uzert",
-  "type": "chat",
-  "prompt": "Can you look into a subreddit named r/TomHoman",
-  "model": "llama3.2",
-  "source": "telegram",
-  "createdAt": "2026-02-23T12:43:17.887Z",
-  "status": "pending"
-}
