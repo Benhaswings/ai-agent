@@ -307,6 +307,13 @@ app.get('/', (req, res) => {
   
   <div class="input-container">
     <div class="input-wrapper">
+      <select id="model" style="margin-bottom: 8px;">
+        <option value="llama3.2">🦙 Llama 3.2 (Balanced)</option>
+        <option value="llama3.2:1b">⚡ Llama 3.2 1B (Fast)</option>
+        <option value="phi3:mini">💻 Phi-3 Mini (Coding)</option>
+        <option value="qwen2.5:3b">🧠 Qwen 2.5 (Reasoning)</option>
+        <option value="tinyllama">🔥 TinyLlama (Lightning)</option>
+      </select>
       <select id="type">
         <option value="chat">💬 Chat</option>
         <option value="code">💻 Code</option>
@@ -369,6 +376,7 @@ app.get('/', (req, res) => {
       if (!text) return;
       
       const type = document.getElementById('type').value;
+      const model = document.getElementById('model').value;
       
       // Add user message
       addMessage(text, 'user');
@@ -383,7 +391,7 @@ app.get('/', (req, res) => {
         const res = await fetch('/job', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type, prompt: text })
+          body: JSON.stringify({ type, prompt: text, model })
         });
         
         const data = await res.json();
@@ -470,11 +478,24 @@ app.get('/', (req, res) => {
   `);
 });
 
+// User model preferences (in-memory, per session)
+const userModels = {};
+
+// Load available models
+const configPath = path.join(__dirname, '..', 'config', 'agent.json');
+let availableModels = [];
+try {
+  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  availableModels = config.models || [];
+} catch (e) {
+  console.error('Failed to load models config:', e.message);
+}
+
 // Telegram message handler (two-way communication)
 if (bot && TELEGRAM_CHAT_ID) {
   bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
-    const text = msg.text;
+    const text = msg.text || '';
     
     // Only respond to configured chat
     if (chatId.toString() !== TELEGRAM_CHAT_ID) {
@@ -482,8 +503,82 @@ if (bot && TELEGRAM_CHAT_ID) {
       return;
     }
     
-    // Skip commands for now
-    if (text.startsWith('/')) return;
+    // Handle commands
+    if (text.startsWith('/')) {
+      const command = text.split(' ')[0].toLowerCase();
+      
+      switch (command) {
+        case '/models':
+        case '/model':
+          const modelList = availableModels.map(m => 
+            `• ${m.name} - ${m.description}\n  Speed: ${m.speed} | Size: ${m.size}`
+          ).join('\n\n');
+          bot.sendMessage(chatId, `🤖 *Available Models*\n\n${modelList}\n\nUse /model <name> to switch\nExample: /model phi3:mini`, { parse_mode: 'Markdown' });
+          return;
+          
+        case '/fast':
+          userModels[chatId] = 'llama3.2:1b';
+          bot.sendMessage(chatId, '⚡ Switched to fast mode (llama3.2:1b)');
+          return;
+          
+        case '/code':
+          userModels[chatId] = 'phi3:mini';
+          bot.sendMessage(chatId, '💻 Switched to coding mode (phi3:mini)');
+          return;
+          
+        case '/smart':
+          userModels[chatId] = 'qwen2.5:3b';
+          bot.sendMessage(chatId, '🧠 Switched to reasoning mode (qwen2.5:3b)');
+          return;
+          
+        case '/tiny':
+          userModels[chatId] = 'tinyllama';
+          bot.sendMessage(chatId, '⚡ Switched to lightning mode (tinyllama)');
+          return;
+          
+        case '/default':
+          delete userModels[chatId];
+          bot.sendMessage(chatId, '✅ Reset to default model (llama3.2)');
+          return;
+          
+        case '/help':
+          bot.sendMessage(chatId, 
+            `🤖 *GitHub Agent Commands*\n\n` +
+            `*Model Selection:*\n` +
+            `/models - List all models\n` +
+            `/fast - Use fast model (1B)\n` +
+            `/code - Use coding model (phi3)\n` +
+            `/smart - Use reasoning model (qwen)\n` +
+            `/tiny - Use lightning fast model\n` +
+            `/default - Reset to default\n\n` +
+            `Just type any message to chat!`,
+            { parse_mode: 'Markdown' }
+          );
+          return;
+      }
+      
+      // Handle /model <name> 
+      if (command === '/model' && text.split(' ').length > 1) {
+        const requestedModel = text.split(' ')[1].trim();
+        const modelExists = availableModels.find(m => m.id === requestedModel);
+        if (modelExists) {
+          userModels[chatId] = requestedModel;
+          bot.sendMessage(chatId, `✅ Switched to ${modelExists.name}`);
+        } else {
+          bot.sendMessage(chatId, `❌ Model not found: ${requestedModel}\nUse /models to see available models`);
+        }
+        return;
+      }
+      
+      // Unknown command
+      if (command !== '/start') {
+        bot.sendMessage(chatId, '❓ Unknown command. Use /help for available commands');
+        return;
+      }
+    }
+    
+    // Get user's preferred model or default
+    const selectedModel = userModels[chatId] || 'llama3.2';
     
     // Create job from message
     const jobId = `job-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -491,7 +586,7 @@ if (bot && TELEGRAM_CHAT_ID) {
       id: jobId,
       type: 'chat',
       prompt: text,
-      model: 'llama3.2',
+      model: selectedModel,
       source: 'telegram',
       createdAt: new Date().toISOString(),
       status: 'pending'
