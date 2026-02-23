@@ -18,7 +18,7 @@ let bot = null;
 if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
   try {
     const TelegramBot = require('node-telegram-bot-api');
-    bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: false });
+    bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
     console.log('✅ Telegram notifications enabled');
   } catch (e) {
     console.log('⚠️ Telegram bot not available:', e.message);
@@ -194,6 +194,52 @@ app.get('/', (req, res) => {
 </html>
   `);
 });
+
+// Telegram message handler (two-way communication)
+if (bot && TELEGRAM_CHAT_ID) {
+  bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text;
+    
+    // Only respond to configured chat
+    if (chatId.toString() !== TELEGRAM_CHAT_ID) {
+      bot.sendMessage(chatId, '⛔ Unauthorized');
+      return;
+    }
+    
+    // Skip commands for now
+    if (text.startsWith('/')) return;
+    
+    // Create job from message
+    const jobId = `job-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const job = {
+      id: jobId,
+      type: 'chat',
+      prompt: text,
+      model: 'llama3.2',
+      source: 'telegram',
+      createdAt: new Date().toISOString(),
+      status: 'pending'
+    };
+    
+    // Save job
+    const jobPath = path.join(__dirname, '..', 'jobs', 'pending', `${jobId}.json`);
+    fs.writeFileSync(jobPath, JSON.stringify(job, null, 2));
+    
+    // Git commit and push
+    try {
+      execSync('git add jobs/pending/');
+      execSync(`git commit -m "Telegram job: ${jobId}"`);
+      execSync('git push');
+      
+      bot.sendMessage(chatId, `🤖 *Job Queued*\n\nProcessing: "${text.substring(0, 50)}..."\n\nJob ID: \`${jobId}\``, { parse_mode: 'Markdown' });
+    } catch (error) {
+      bot.sendMessage(chatId, `❌ Failed to queue: ${error.message}`);
+    }
+  });
+  
+  console.log('✅ Telegram two-way messaging enabled');
+}
 
 // Telegram notification endpoint (for agent to call)
 app.post('/notify', (req, res) => {
