@@ -5,5 +5,7 @@
   "model": "qwen2.5:3b",
   "source": "telegram",
   "createdAt": "2026-02-23T18:27:14.799Z",
-  "status": "pending"
+  "status": "completed",
+  "completedAt": "2026-02-23T18:27:17.047Z",
+  "duration": 54
 }
