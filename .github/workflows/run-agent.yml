@@ -8,7 +8,7 @@ on:
 
 jobs:
   process-job:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: write
       pull-requests: write
@@ -55,7 +55,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        OLLAMA_HOST: ${{ secrets.OLLAMA_HOST }}
+        OLLAMA_HOST: http://localhost:11434
       run: |
         cd agent
         node run.js "$JOB_ID"
