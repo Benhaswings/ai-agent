@@ -1,0 +1,9 @@
+{
+  "id": "job-1771844337838-819konn1f",
+  "type": "research",
+  "prompt": "how is the weather outside",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T10:58:57.838Z",
+  "status": "pending"
+}
