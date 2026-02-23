@@ -1,9 +1,0 @@
-{
-  "id": "job-1771836945574-j4sjco1bz",
-  "type": "chat",
-  "prompt": "What is the weather like outside?",
-  "model": "llama3.2",
-  "source": "telegram",
-  "createdAt": "2026-02-23T08:55:45.574Z",
-  "status": "pending"
-}
