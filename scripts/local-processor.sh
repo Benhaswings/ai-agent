@@ -36,11 +36,7 @@ process_job() {
   if timeout 120 node agent/run.js "$job_id" >> "$LOG_FILE" 2>&1; then
     echo "$(date): Completed $job_id" >> "$LOG_FILE"
     
-    # Send Telegram notification
-    if [ -f "$JOBS_DIR/completed/$job_id.json" ]; then
-      RESULT=$(cat "$JOBS_DIR/completed/$job_id.json" | grep -o '"result":"[^"]*"' | head -1 | cut -d'"' -f4)
-      send_telegram "✅ *Job Completed*\n\nJob ID: \`$job_id\`\n\nResult:\n\`\`\`${RESULT:0:150}...\`\`\`"
-    fi
+    # Agent already sent Telegram notification with just the result
     
     # Git commit
     git add -A
@@ -48,7 +44,7 @@ process_job() {
     git push >> "$LOG_FILE" 2>&1
   else
     echo "$(date): Failed $job_id" >> "$LOG_FILE"
-    send_telegram "❌ *Job Failed*\n\nJob ID: \`$job_id\`"
+    # Agent already sends failure notification
   fi
 }
 

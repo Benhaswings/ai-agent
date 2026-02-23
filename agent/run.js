@@ -101,8 +101,8 @@ async function runAgent() {
     fs.writeFileSync(failedPath, JSON.stringify(failedJob, null, 2));
     fs.unlinkSync(jobPath);
     
-    // Notify failure
-    notifyTelegram(`❌ *Job Failed*\n\nType: ${job.type}\nError: ${error.message.substring(0, 100)}\n\nJob ID: \`${JOB_ID}\``);
+    // Notify failure - just the error
+    notifyTelegram(`Error: ${error.message}`);
     
     process.exit(1);
   }
