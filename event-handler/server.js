@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { subscribe, unsubscribe, listSubscriptions, checkAllFeeds } = require('./agent/rss');
 
 const app = express();
 app.use(express.json());
@@ -20,6 +21,14 @@ if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
     const TelegramBot = require('node-telegram-bot-api');
     bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
     console.log('✅ Telegram notifications enabled');
+    
+    // Start RSS checker (check every 5 minutes)
+    setInterval(() => {
+      if (bot) {
+        checkAllFeeds(bot, TELEGRAM_CHAT_ID).catch(console.error);
+      }
+    }, 5 * 60 * 1000);
+    console.log('✅ RSS feed checker started (checking every 5 minutes)');
   } catch (e) {
     console.log('⚠️ Telegram bot not available:', e.message);
   }
@@ -568,6 +577,7 @@ if (bot && TELEGRAM_CHAT_ID) {
                     { text: '📋 All Models', callback_data: 'action:models' }
                   ],
                   [
+                    { text: '📰 RSS Feeds', callback_data: 'action:rss' },
                     { text: '❓ Help', callback_data: 'action:help' }
                   ]
                 ]
