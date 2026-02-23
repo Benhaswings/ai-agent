@@ -1,9 +1,0 @@
-{
-  "id": "job-1771870619899-vw0gk76vq",
-  "type": "chat",
-  "prompt": "Who is the president",
-  "model": "llama3.2",
-  "source": "telegram",
-  "createdAt": "2026-02-23T18:16:59.899Z",
-  "status": "pending"
-}
