@@ -124,71 +124,346 @@ app.get('/', (req, res) => {
 <!DOCTYPE html>
 <html>
 <head>
-  <title>GitHub Agent</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🤖 GitHub Agent Chat</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-    textarea { width: 100%; height: 100px; margin: 10px 0; }
-    button { padding: 10px 20px; background: #0066cc; color: white; border: none; cursor: pointer; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      background: #f5f5f5; 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column;
+    }
+    .header { 
+      background: #0066cc; 
+      color: white; 
+      padding: 15px 20px; 
+      display: flex; 
+      align-items: center; 
+      gap: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .header h1 { font-size: 1.2rem; font-weight: 600; }
+    .status { 
+      margin-left: auto; 
+      font-size: 0.8rem; 
+      padding: 4px 10px; 
+      background: rgba(255,255,255,0.2); 
+      border-radius: 12px;
+    }
+    .chat-container { 
+      flex: 1; 
+      overflow-y: auto; 
+      padding: 20px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 15px;
+    }
+    .message { 
+      max-width: 85%; 
+      padding: 12px 16px; 
+      border-radius: 18px; 
+      word-wrap: break-word;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .message.user { 
+      align-self: flex-end; 
+      background: #0066cc; 
+      color: white; 
+      border-bottom-right-radius: 4px;
+    }
+    .message.ai { 
+      align-self: flex-start; 
+      background: white; 
+      color: #333; 
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .message.system {
+      align-self: center;
+      background: #ff9800;
+      color: white;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+    }
+    .message.error {
+      align-self: center;
+      background: #f44336;
+      color: white;
+    }
+    .message-header {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+    .message-content {
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    .message-content code {
+      background: rgba(0,0,0,0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+    .message-content pre {
+      background: rgba(0,0,0,0.05);
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-top: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+    }
+    .input-container { 
+      background: white; 
+      padding: 15px 20px; 
+      border-top: 1px solid #e0e0e0;
+      display: flex; 
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .input-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    select {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: white;
+    }
+    textarea { 
+      flex: 1; 
+      padding: 12px 16px; 
+      border: 1px solid #ddd; 
+      border-radius: 20px; 
+      resize: none;
+      font-size: 1rem;
+      font-family: inherit;
+      min-height: 44px;
+      max-height: 150px;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #0066cc;
+    }
+    button { 
+      padding: 12px 24px; 
+      background: #0066cc; 
+      color: white; 
+      border: none; 
+      border-radius: 20px; 
+      cursor: pointer; 
+      font-size: 1rem;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
     button:hover { background: #0055aa; }
-    .job { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 4px; }
-    .pending { border-left: 4px solid #ff9800; }
-    .completed { border-left: 4px solid #4caf50; }
-    .failed { border-left: 4px solid #f44336; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+    .typing {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+      align-self: flex-start;
+    }
+    .typing span {
+      width: 8px;
+      height: 8px;
+      background: #999;
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out;
+    }
+    .typing span:nth-child(1) { animation-delay: 0s; }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.6); }
+      40% { transform: scale(1); }
+    }
+    @media (max-width: 600px) {
+      .message { max-width: 90%; }
+      .header h1 { font-size: 1rem; }
+    }
   </style>
 </head>
 <body>
-  <h1>🤖 GitHub Agent</h1>
+  <div class="header">
+    <span>🤖</span>
+    <h1>GitHub Agent</h1>
+    <span class="status" id="status">Online</span>
+  </div>
   
-  <h2>New Task</h2>
-  <select id="type">
-    <option value="chat">Chat</option>
-    <option value="code">Code</option>
-    <option value="research">Research</option>
-  </select>
-  <textarea id="prompt" placeholder="Enter your request..."></textarea>
-  <button onclick="submitJob()">Submit Job</button>
+  <div class="chat-container" id="chat"></div>
   
-  <h2>Recent Jobs</h2>
-  <div id="jobs">Loading...</div>
+  <div class="input-container">
+    <div class="input-wrapper">
+      <select id="type">
+        <option value="chat">💬 Chat</option>
+        <option value="code">💻 Code</option>
+        <option value="research">🔍 Research</option>
+      </select>
+      <textarea id="prompt" placeholder="Type your message..." rows="1"></textarea>
+    </div>
+    <button onclick="submitJob()" id="sendBtn">Send</button>
+  </div>
   
   <script>
+    const chat = document.getElementById('chat');
+    const prompt = document.getElementById('prompt');
+    const sendBtn = document.getElementById('sendBtn');
+    
+    // Auto-resize textarea
+    prompt.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+    });
+    
+    // Send on Enter (Shift+Enter for new line)
+    prompt.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        submitJob();
+      }
+    });
+    
+    function addMessage(content, type, header = '') {
+      const div = document.createElement('div');
+      div.className = 'message ' + type;
+      if (header) {
+        div.innerHTML = '<div class="message-header">' + header + '</div>';
+      }
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'message-content';
+      contentDiv.textContent = content;
+      div.appendChild(contentDiv);
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+    
+    function showTyping() {
+      const div = document.createElement('div');
+      div.className = 'typing';
+      div.id = 'typing';
+      div.innerHTML = '<span></span><span></span><span></span>';
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+    
+    function hideTyping() {
+      const typing = document.getElementById('typing');
+      if (typing) typing.remove();
+    }
+    
     async function submitJob() {
+      const text = prompt.value.trim();
+      if (!text) return;
+      
       const type = document.getElementById('type').value;
-      const prompt = document.getElementById('prompt').value;
       
-      const res = await fetch('/job', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, prompt })
-      });
+      // Add user message
+      addMessage(text, 'user');
+      prompt.value = '';
+      prompt.style.height = 'auto';
+      sendBtn.disabled = true;
       
-      const data = await res.json();
-      if (data.success) {
-        alert('Job queued! ID: ' + data.jobId);
-        loadJobs();
-      } else {
-        alert('Error: ' + data.error);
+      // Show typing indicator
+      showTyping();
+      
+      try {
+        const res = await fetch('/job', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type, prompt: text })
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+          // Poll for result
+          pollForResult(data.jobId);
+        } else {
+          hideTyping();
+          addMessage('Error: ' + data.error, 'error');
+          sendBtn.disabled = false;
+        }
+      } catch (err) {
+        hideTyping();
+        addMessage('Error: ' + err.message, 'error');
+        sendBtn.disabled = false;
       }
     }
     
-    async function loadJobs() {
-      const res = await fetch('/jobs?limit=10');
-      const jobs = await res.json();
+    async function pollForResult(jobId) {
+      let attempts = 0;
+      const maxAttempts = 60; // 2 minutes max
       
-      const html = jobs.map(j => \`
-        <div class="job \${j.location}">
-          <strong>\${j.type}</strong> - \${j.location}
-          <br><small>\${j.id}</small>
-          <br>\${j.prompt.substring(0, 100)}...
-          \${j.result ? '<br><pre>' + j.result.substring(0, 200) + '...</pre>' : ''}
-        </div>
-      \`).join('');
+      const check = async () => {
+        attempts++;
+        
+        try {
+          const res = await fetch('/job/' + jobId);
+          const job = await res.json();
+          
+          if (job.status === 'completed') {
+            hideTyping();
+            addMessage(job.result, 'ai');
+            sendBtn.disabled = false;
+            return;
+          } else if (job.status === 'failed') {
+            hideTyping();
+            addMessage('Failed: ' + (job.error || 'Unknown error'), 'error');
+            sendBtn.disabled = false;
+            return;
+          }
+          
+          if (attempts < maxAttempts) {
+            setTimeout(check, 2000);
+          } else {
+            hideTyping();
+            addMessage('Request timed out. Check back later.', 'error');
+            sendBtn.disabled = false;
+          }
+        } catch (err) {
+          if (attempts < maxAttempts) {
+            setTimeout(check, 2000);
+          }
+        }
+      };
       
-      document.getElementById('jobs').innerHTML = html || 'No jobs yet';
+      check();
     }
     
-    loadJobs();
-    setInterval(loadJobs, 5000);
+    // Load chat history
+    async function loadHistory() {
+      try {
+        const res = await fetch('/jobs?limit=20');
+        const jobs = await res.json();
+        
+        // Reverse to show oldest first
+        jobs.reverse().forEach(j => {
+          addMessage(j.prompt, 'user', new Date(j.createdAt).toLocaleString());
+          if (j.result) {
+            addMessage(j.result, 'ai');
+          } else if (j.status === 'failed') {
+            addMessage('Error: ' + (j.error || 'Failed'), 'error');
+          }
+        });
+      } catch (e) {
+        console.error('Failed to load history:', e);
+      }
+    }
+    
+    loadHistory();
   </script>
 </body>
 </html>
