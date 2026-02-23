@@ -1,0 +1,9 @@
+{
+  "id": "job-1771871203275-dvzcrpju2",
+  "type": "chat",
+  "prompt": "Hey",
+  "model": "tinyllama",
+  "source": "telegram",
+  "createdAt": "2026-02-23T18:26:43.275Z",
+  "status": "pending"
+}
