@@ -1,0 +1,9 @@
+{
+  "id": "job-1771834028479-oiae9jchr",
+  "type": "chat",
+  "prompt": "Say hello from the GitHub Agent!",
+  "model": "llama3.2",
+  "priority": "normal",
+  "createdAt": "2026-02-23T08:07:08.479Z",
+  "status": "pending"
+}
