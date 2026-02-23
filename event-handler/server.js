@@ -31,16 +31,16 @@ if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
     }, 5 * 60 * 1000);
     console.log('✅ RSS feed checker started (checking every 5 minutes)');
     
-    // Start DHS RSS checker (check 4 times a day: 6am, 12pm, 6pm, 12am)
+    // Start DHS RSS checker (check 8 times a day: every 3 hours)
     const checkDHS = () => {
       if (bot) {
         checkDHSRSS(bot).catch(console.error);
       }
     };
     
-    // Check every 6 hours (4 times a day)
-    setInterval(checkDHS, 6 * 60 * 60 * 1000);
-    console.log('✅ DHS RSS checker started (checking every 6 hours - 4x daily)');
+    // Check every 3 hours (8 times a day)
+    setInterval(checkDHS, 3 * 60 * 60 * 1000);
+    console.log('✅ DHS RSS checker started (checking every 3 hours - 8x daily)');
     
     // Initial check after 1 minute
     setTimeout(checkDHS, 60000);
