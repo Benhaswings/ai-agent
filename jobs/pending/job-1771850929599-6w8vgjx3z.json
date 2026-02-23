@@ -1,0 +1,9 @@
+{
+  "id": "job-1771850929599-6w8vgjx3z",
+  "type": "chat",
+  "prompt": "Are the rss feeds I had setup working?",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T12:48:49.599Z",
+  "status": "pending"
+}
