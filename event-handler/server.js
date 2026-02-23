@@ -541,11 +541,48 @@ if (bot && TELEGRAM_CHAT_ID) {
           bot.sendMessage(chatId, '✅ Reset to default model (llama3.2)');
           return;
           
+        case '/menu':
+        case '/start':
+          const currentModel = userModels[chatId] || 'llama3.2';
+          const modelInfo = availableModels.find(m => m.id === currentModel);
+          
+          bot.sendMessage(chatId, 
+            `🤖 *GitHub Agent Menu*\n\n` +
+            `Current Model: ${modelInfo ? modelInfo.name : currentModel}\n\n` +
+            `*Quick Actions:*`,
+            {
+              parse_mode: 'Markdown',
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    { text: '⚡ Fast', callback_data: 'model:llama3.2:1b' },
+                    { text: '💻 Code', callback_data: 'model:phi3:mini' },
+                    { text: '🧠 Smart', callback_data: 'model:qwen2.5:3b' }
+                  ],
+                  [
+                    { text: '🔥 Tiny', callback_data: 'model:tinyllama' },
+                    { text: '🦙 Default', callback_data: 'model:llama3.2' }
+                  ],
+                  [
+                    { text: '🔍 Web Search', callback_data: 'action:search' },
+                    { text: '📋 All Models', callback_data: 'action:models' }
+                  ],
+                  [
+                    { text: '❓ Help', callback_data: 'action:help' }
+                  ]
+                ]
+              }
+            }
+          );
+          return;
+          
         case '/help':
           bot.sendMessage(chatId, 
             `🤖 *GitHub Agent Commands*\n\n` +
+            `*Quick Commands:*\n` +
+            `/menu - Show interactive menu\n` +
+            `/models - List all models\n\n` +
             `*Model Selection:*\n` +
-            `/models - List all models\n` +
             `/fast - Use fast model (1B)\n` +
             `/code - Use coding model (phi3)\n` +
             `/smart - Use reasoning model (qwen)\n` +
@@ -636,6 +673,46 @@ if (bot && TELEGRAM_CHAT_ID) {
       // No "Job Queued" message - just wait for AI response
     } catch (error) {
       bot.sendMessage(chatId, `❌ Failed to queue: ${error.message}`);
+    }
+  });
+  
+  // Handle inline keyboard callbacks
+  bot.on('callback_query', async (query) => {
+    const chatId = query.message.chat.id;
+    const data = query.data;
+    
+    // Answer the callback to remove loading state
+    bot.answerCallbackQuery(query.id);
+    
+    if (data.startsWith('model:')) {
+      const modelId = data.replace('model:', '');
+      const modelInfo = availableModels.find(m => m.id === modelId);
+      
+      if (modelInfo) {
+        userModels[chatId] = modelId;
+        bot.sendMessage(chatId, `✅ Switched to *${modelInfo.name}*\n\n${modelInfo.description}`, { parse_mode: 'Markdown' });
+      }
+    } else if (data === 'action:search') {
+      bot.sendMessage(chatId, 
+        `🔍 *Web Search*\n\n` +
+        `Type your search query:\n` +
+        `/search <your question>`,
+        { parse_mode: 'Markdown' }
+      );
+    } else if (data === 'action:models') {
+      const modelList = availableModels.map(m => 
+        `• *${m.name}*\n  ${m.description}\n  Speed: ${m.speed}`
+      ).join('\n\n');
+      bot.sendMessage(chatId, `🤖 *Available Models*\n\n${modelList}\n\nUse /model <name> to switch`, { parse_mode: 'Markdown' });
+    } else if (data === 'action:help') {
+      bot.sendMessage(chatId, 
+        `🤖 *Quick Help*\n\n` +
+        `*Menu:* /menu\n` +
+        `*Models:* /models\n` +
+        `*Search:* /search <query>\n\n` +
+        `Just type any message to chat with AI!`,
+        { parse_mode: 'Markdown' }
+      );
     }
   });
   
