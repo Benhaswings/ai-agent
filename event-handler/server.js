@@ -31,20 +31,19 @@ if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
     }, 5 * 60 * 1000);
     console.log('✅ RSS feed checker started (checking every 5 minutes)');
     
-    // Start DHS RSS checker (check every 10 minutes)
-    setInterval(() => {
+    // Start DHS RSS checker (check 4 times a day: 6am, 12pm, 6pm, 12am)
+    const checkDHS = () => {
       if (bot) {
         checkDHSRSS(bot).catch(console.error);
       }
-    }, 10 * 60 * 1000);
-    console.log('✅ DHS RSS checker started (checking every 10 minutes)');
+    };
     
-    // Initial check after 30 seconds
-    setTimeout(() => {
-      if (bot) {
-        checkDHSRSS(bot).catch(console.error);
-      }
-    }, 30000);
+    // Check every 6 hours (4 times a day)
+    setInterval(checkDHS, 6 * 60 * 60 * 1000);
+    console.log('✅ DHS RSS checker started (checking every 6 hours - 4x daily)');
+    
+    // Initial check after 1 minute
+    setTimeout(checkDHS, 60000);
   } catch (e) {
     console.log('⚠️ Telegram bot not available:', e.message);
   }
