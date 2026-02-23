@@ -5,5 +5,8 @@
   "model": "llama3.2",
   "source": "telegram",
   "createdAt": "2026-02-23T18:14:50.199Z",
-  "status": "pending"
+  "status": "completed",
+  "result": "How can I assist you today?",
+  "completedAt": "2026-02-23T18:14:52.987Z",
+  "duration": 1322
 }
