@@ -1,0 +1,9 @@
+{
+  "id": "job-1771870428005-gy8qcyyxe",
+  "type": "chat",
+  "prompt": "Can I improve this in any way?",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T18:13:48.005Z",
+  "status": "pending"
+}
