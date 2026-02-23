@@ -1,9 +1,0 @@
-{
-  "id": "job-1771842991484-omydq2g4q",
-  "type": "research",
-  "prompt": "what is the weather",
-  "model": "llama3.2",
-  "source": "telegram",
-  "createdAt": "2026-02-23T10:36:31.484Z",
-  "status": "pending"
-}
