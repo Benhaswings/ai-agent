@@ -507,7 +507,7 @@ if (bot && TELEGRAM_CHAT_ID) {
       execSync(`git commit -m "Telegram job: ${jobId}"`);
       execSync('git push');
       
-      bot.sendMessage(chatId, `🤖 *Job Queued*\n\nProcessing: "${text.substring(0, 50)}..."\n\nJob ID: \`${jobId}\``, { parse_mode: 'Markdown' });
+      // No "Job Queued" message - just wait for AI response
     } catch (error) {
       bot.sendMessage(chatId, `❌ Failed to queue: ${error.message}`);
     }
