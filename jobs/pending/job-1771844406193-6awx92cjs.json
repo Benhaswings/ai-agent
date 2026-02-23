@@ -1,9 +1,9 @@
 {
-  "id": "job-1771844391428-s2evlviaw",
-  "type": "chat",
+  "id": "job-1771844406193-6awx92cjs",
+  "type": "research",
   "prompt": "What is the weather like where I am located",
   "model": "llama3.2",
   "source": "telegram",
-  "createdAt": "2026-02-23T10:59:51.428Z",
+  "createdAt": "2026-02-23T11:00:06.194Z",
   "status": "pending"
 }
