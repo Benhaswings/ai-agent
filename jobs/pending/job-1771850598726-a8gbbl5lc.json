@@ -1,0 +1,9 @@
+{
+  "id": "job-1771850598726-a8gbbl5lc",
+  "type": "chat",
+  "prompt": "Hello...",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T12:43:18.727Z",
+  "status": "pending"
+}
