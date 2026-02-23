@@ -48,6 +48,14 @@
       "size": "600MB",
       "speed": "very-fast",
       "bestFor": "speed"
+    },
+    {
+      "id": "claude",
+      "name": "Claude 3.5 Sonnet",
+      "description": "Anthropic - Best quality responses",
+      "size": "API",
+      "speed": "fast",
+      "bestFor": "quality"
     }
   ]
 }
