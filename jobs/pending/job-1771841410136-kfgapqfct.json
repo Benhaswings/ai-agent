@@ -1,9 +1,0 @@
-{
-  "id": "job-1771841410136-kfgapqfct",
-  "type": "research",
-  "prompt": "weather",
-  "model": "llama3.2",
-  "source": "telegram",
-  "createdAt": "2026-02-23T10:10:10.136Z",
-  "status": "pending"
-}
