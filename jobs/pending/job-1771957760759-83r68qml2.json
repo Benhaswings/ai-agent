@@ -1,9 +1,0 @@
-{
-  "id": "job-1771957760759-83r68qml2",
-  "type": "chat",
-  "prompt": "I want to get ollama go connect with my telegram",
-  "model": "llama3.2",
-  "source": "telegram",
-  "createdAt": "2026-02-24T18:29:20.759Z",
-  "status": "pending"
-}
