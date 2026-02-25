@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: github-agent-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+    restart: unless-stopped
+    # Uncomment for NVIDIA GPU support
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  github-agent:
+    build: .
+    container_name: github-agent-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./jobs:/app/jobs
+      - ./memory:/app/memory
+      - ./config:/app/config
+      - ./.env:/app/.env:ro
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - NODE_ENV=production
+    env_file:
+      - .env
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    command: ["app"]
+
+  # Optional: Separate processor service
+  processor:
+    build: .
+    container_name: github-agent-processor
+    volumes:
+      - ./jobs:/app/jobs
+      - ./memory:/app/memory
+      - ./config:/app/config
+      - ./.env:/app/.env:ro
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - NODE_ENV=production
+    env_file:
+      - .env
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    command: ["processor"]
+
+volumes:
+  ollama-models:
+    driver: local

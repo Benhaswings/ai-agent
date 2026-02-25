@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.github
+jobs/*
+!jobs/.gitkeep
+memory/*
+!memory/.gitkeep
+*.log
+.DS_Store
+.vscode
+.idea
+README.md
+QUICKSTART.md
+BOOTSTRAP.md
