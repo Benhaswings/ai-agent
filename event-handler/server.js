@@ -579,16 +579,6 @@ if (bot && TELEGRAM_CHAT_ID) {
           bot.sendMessage(chatId, '✅ Reset to default model (llama3.2)');
           return;
           
-        case '/claude':
-          userModels[chatId] = 'claude';
-          bot.sendMessage(chatId, '🤖 Switched to Claude 3.5 Sonnet (API)');
-          return;
-          
-        case '/nvidia':
-          userModels[chatId] = 'nvidia';
-          bot.sendMessage(chatId, '🟢 Switched to NVIDIA Llama 3.1 405B (API)');
-          return;
-          
         case '/menu':
         case '/start':
           const currentModel = userModels[chatId] || 'llama3.2';
@@ -609,11 +599,7 @@ if (bot && TELEGRAM_CHAT_ID) {
                   ],
                   [
                     { text: '🔥 Tiny', callback_data: 'model:tinyllama' },
-                    { text: '🦙 Default', callback_data: 'model:llama3.2' },
-                    { text: '🤖 Claude', callback_data: 'model:claude' }
-                  ],
-                  [
-                    { text: '🟢 NVIDIA', callback_data: 'model:nvidia' }
+                    { text: '🦙 Default', callback_data: 'model:llama3.2' }
                   ],
                   [
                     { text: '🔍 Web Search', callback_data: 'action:search' },
@@ -640,8 +626,6 @@ if (bot && TELEGRAM_CHAT_ID) {
             `/code - Use coding model (phi3)\n` +
             `/smart - Use reasoning model (qwen)\n` +
             `/tiny - Use lightning fast model\n` +
-            `/claude - Use Claude 3.5 Sonnet (API)\n` +
-            `/nvidia - Use NVIDIA Llama 3.1 405B (API)\n` +
             `/default - Reset to default\n\n` +
             `*Web Search:*\n` +
             `/search <query> - Search the web\n` +
