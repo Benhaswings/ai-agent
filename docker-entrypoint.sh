@@ -4,10 +4,18 @@ set -e
 # Function to wait for Ollama to be ready
 wait_for_ollama() {
     echo "⏳ Waiting for Ollama to be ready..."
+    local retries=0
+    local max_retries=30
+    
     until curl -s http://ollama:11434/api/tags > /dev/null 2>&1 || curl -s http://localhost:11434/api/tags > /dev/null 2>&1; do
-        echo "   Still waiting..."
-        # Use bash built-in instead of sleep
-        read -t 2 < /dev/null || true
+        retries=$((retries + 1))
+        if [ $retries -ge $max_retries ]; then
+            echo "❌ Timeout waiting for Ollama"
+            exit 1
+        fi
+        echo "   Still waiting... ($retries/$max_retries)"
+        # Use bash sleep builtin
+        (sleep 2) 2>/dev/null || (read -t 2) 2>/dev/null || echo -n "."
     done
     echo "✅ Ollama is ready!"
 }

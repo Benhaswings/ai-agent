@@ -25,13 +25,13 @@ if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
     bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
     console.log('✅ Telegram notifications enabled');
     
-    // Start RSS checker (check every 5 minutes)
+    // Start RSS checker (check once a day)
     setInterval(() => {
       if (bot) {
         checkAllFeeds(bot, TELEGRAM_CHAT_ID).catch(console.error);
       }
-    }, 5 * 60 * 1000);
-    console.log('✅ RSS feed checker started (checking every 5 minutes)');
+    }, 24 * 60 * 60 * 1000);
+    console.log('✅ RSS feed checker started (checking once daily)');
     
     // Start DHS RSS checker (check 8 times a day: every 3 hours)
     const checkDHS = () => {
