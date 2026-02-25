@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const { subscribe, unsubscribe, listSubscriptions, checkAllFeeds } = require('../agent/rss');
-const { checkDHSRSS, manualCheck, DHS_CHANNEL } = require('../agent/dhs-rss');
+const { checkDHSPressReleases: checkDHSRSS, manualCheck, DHS_CHANNEL } = require('../agent/dhs-rss');
 const { checkBreitbartRSS, manualCheckBreitbart, BREITBART_CHANNEL } = require('../agent/breitbart-rss');
 
 const app = express();
