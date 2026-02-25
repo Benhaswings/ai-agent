@@ -1,0 +1,136 @@
+# Docker Swarm Setup for Raspberry Pi Cluster
+# Simpler alternative to Kubernetes
+
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.architecture==aarch64
+      resources:
+        limits:
+          memory: 3G
+          cpus: '1.5'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+    networks:
+      - agent-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  github-agent:
+    image: github-agent-app:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.architecture==aarch64
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    ports:
+      - "3000:3000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - NODE_ENV=production
+      - GITHUB_REPO=Benhaswings/ai-agent
+      - PORT=3000
+      - TELEGRAM_CHAT_ID=1569185905
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - BRAVE_API_KEY=${BRAVE_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - agent-data:/app/data
+    networks:
+      - agent-network
+    depends_on:
+      - ollama
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  processor:
+    image: github-agent-app:latest
+    command: ["/usr/local/bin/docker-entrypoint.sh", "processor"]
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.architecture==aarch64
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - NODE_ENV=production
+      - GITHUB_REPO=Benhaswings/ai-agent
+      - TELEGRAM_CHAT_ID=1569185905
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - BRAVE_API_KEY=${BRAVE_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - agent-data:/app/data
+    networks:
+      - agent-network
+    depends_on:
+      - ollama
+
+  # Visualizer for Swarm (optional)
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - agent-network
+
+volumes:
+  ollama-models:
+    driver: local
+  agent-data:
+    driver: local
+
+networks:
+  agent-network:
+    driver: overlay
+    attachable: true

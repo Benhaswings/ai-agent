@@ -1,9 +1,0 @@
-{
-  "id": "job-1771871271700-4atbkr4nx",
-  "type": "research",
-  "prompt": "top dhs news",
-  "model": "llama3.2",
-  "source": "telegram",
-  "createdAt": "2026-02-23T18:27:51.700Z",
-  "status": "pending"
-}
