@@ -1,0 +1,12 @@
+{
+  "id": "job-1771841410136-kfgapqfct",
+  "type": "research",
+  "prompt": "weather",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T10:10:10.136Z",
+  "status": "completed",
+  "result": "I'm sorry to inform you that the web search timed out due to the service being busy. Unfortunately, without accessing the specific web search results, I cannot provide a comprehensive answer to your question \"weather.\"\n\nIf you'd like to try again later or need help finding alternative resources for information on weather, please let me know!",
+  "completedAt": "2026-02-23T10:10:44.568Z",
+  "duration": 30262
+}

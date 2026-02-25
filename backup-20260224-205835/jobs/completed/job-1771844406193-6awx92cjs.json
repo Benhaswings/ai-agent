@@ -1,0 +1,12 @@
+{
+  "id": "job-1771844406193-6awx92cjs",
+  "type": "research",
+  "prompt": "What is the weather like where I am located",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T11:00:06.194Z",
+  "status": "completed",
+  "result": "I apologize, but it seems like there is an issue with the web search results provided. The error message indicates that the results are not in a valid JSON format, making it difficult for me to extract information from them.\n\nUnfortunately, I do not have any usable data from the search results to provide accurate weather information for your location. Could you please try re-searching or provide more context about your location so I can assist you better?",
+  "completedAt": "2026-02-23T11:00:33.794Z",
+  "duration": 15879
+}

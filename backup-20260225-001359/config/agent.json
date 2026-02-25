@@ -1,0 +1,61 @@
+{
+  "defaultModel": "llama3.2",
+  "maxTokens": 4096,
+  "timeout": 300000,
+  "notifications": {
+    "telegram": {
+      "enabled": true,
+      "chatId": "1569185905"
+    }
+  },
+  "models": [
+    {
+      "id": "llama3.2",
+      "name": "Llama 3.2 (3B)",
+      "description": "Balanced - Good for most tasks",
+      "size": "2GB",
+      "speed": "medium",
+      "bestFor": "general"
+    },
+    {
+      "id": "llama3.2:1b",
+      "name": "Llama 3.2 (1B)",
+      "description": "Fast - Quick responses",
+      "size": "700MB",
+      "speed": "fast",
+      "bestFor": "simple"
+    },
+    {
+      "id": "phi3:mini",
+      "name": "Phi-3 Mini",
+      "description": "Coding expert - Great for code",
+      "size": "1.6GB",
+      "speed": "fast",
+      "bestFor": "coding"
+    },
+    {
+      "id": "qwen2.5:3b",
+      "name": "Qwen 2.5 (3B)",
+      "description": "Reasoning - Good logic",
+      "size": "1.9GB",
+      "speed": "medium",
+      "bestFor": "reasoning"
+    },
+    {
+      "id": "tinyllama",
+      "name": "TinyLlama",
+      "description": "Lightning fast - Super quick",
+      "size": "600MB",
+      "speed": "very-fast",
+      "bestFor": "speed"
+    },
+    {
+      "id": "claude",
+      "name": "Claude 3.5 Sonnet",
+      "description": "Anthropic - Best quality responses",
+      "size": "API",
+      "speed": "fast",
+      "bestFor": "quality"
+    }
+  ]
+}

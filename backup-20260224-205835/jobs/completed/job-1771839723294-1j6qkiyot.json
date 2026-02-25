@@ -1,0 +1,12 @@
+{
+  "id": "job-1771839723294-1j6qkiyot",
+  "type": "chat",
+  "prompt": "Hows your day",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T09:42:03.294Z",
+  "status": "completed",
+  "result": "I'm just a language model, I don't have emotions or personal experiences, so I don't have good or bad days. However, I'm always here and ready to help you with any questions or tasks you may have!\n\nHow about you? How's your day going so far?",
+  "completedAt": "2026-02-23T09:42:13.622Z",
+  "duration": 7593
+}

@@ -1,0 +1,12 @@
+{
+  "id": "job-1771957760759-83r68qml2",
+  "type": "chat",
+  "prompt": "I want to get ollama go connect with my telegram",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-24T18:29:20.759Z",
+  "status": "completed",
+  "result": "OlaAMA is a popular Telegram bot that can help you manage your conversations and integrate it with various services. To get OlaAMA connected with your Telegram, follow these steps:\n\n1. **Install the OlaAMA bot**: Search for \"OlaAMA\" in the Telegram App Store or Bot Store. Click on the \"Get Bot\" button to install the bot.\n2. **Generate a unique token**: Once installed, you'll need to generate a unique token to authenticate with the OlaAMA API. To do this:\n\t* Open the OlaAMA chat and type `/generate_token`\n\t* Copy the generated token\n3. **Configure your Telegram settings**: Go to your Telegram settings by clicking on the three dots at the top right corner of the chat window and selecting \"Settings\" or \"Admin Settings.\" Then, go to the \"Security\" section.\n4. **Enable two-factor authentication (2FA)**: Enable 2FA to add an extra layer of security to your account.\n5. **Add OlaAMA as a bot**: Go back to the OlaAMA chat and type `/start`. This will open the OlaAMA dashboard, where you can configure your settings, including token and API keys.\n6. **Connect OlaAMA with your services**: Once configured, you can connect OlaAMA with various services, such as IFTTT, Zapier, or other APIs, to automate tasks and integrations.\n\nPlease note that you should keep your unique token secure and never share it with anyone. If you have any issues or questions, feel free to ask!",
+  "completedAt": "2026-02-24T18:30:05.360Z",
+  "duration": 42496
+}

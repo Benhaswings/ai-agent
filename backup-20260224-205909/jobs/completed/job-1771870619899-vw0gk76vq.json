@@ -1,0 +1,12 @@
+{
+  "id": "job-1771870619899-vw0gk76vq",
+  "type": "chat",
+  "prompt": "Who is the president",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T18:16:59.899Z",
+  "status": "completed",
+  "result": "I'm not sure which country you are referring to, as there are several countries with a president. Can you please specify the country or region you are interested in?\n\nHere are some of the current presidents from around the world:\n\n1. United States: Joe Biden\n2. China: Xi Jinping\n3. European Union: Ursula von der Leyen (President of the European Commission)\n4. India: Droupadi Murmu\n5. Brazil: Luiz Inácio Lula da Silva\n\nPlease let me know if you would like more information on a specific country or region.",
+  "completedAt": "2026-02-23T18:17:15.818Z",
+  "duration": 11538
+}

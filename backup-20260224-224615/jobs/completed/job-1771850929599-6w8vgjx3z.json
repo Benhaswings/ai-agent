@@ -1,0 +1,12 @@
+{
+  "id": "job-1771850929599-6w8vgjx3z",
+  "type": "chat",
+  "prompt": "Are the rss feeds I had setup working?",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T12:48:49.599Z",
+  "status": "completed",
+  "result": "I'm a large language model, I don't have the ability to access or verify your specific RSS feed settings. However, I can provide some general guidance on how to troubleshoot common issues with RSS feeds.\n\nHere are a few questions to help me narrow down potential causes:\n\n1. What RSS reader or aggregator were you using (e.g., Feedly, Apple News, Google News)?\n2. Can you describe the error message or behavior that's occurring?\n3. Have you recently updated your RSS feed settings or configuration?\n\nIf you provide more information about your specific situation, I may be able to offer more tailored guidance or suggestions to help resolve any issues with your RSS feeds.",
+  "completedAt": "2026-02-23T12:49:05.038Z",
+  "duration": 14216
+}

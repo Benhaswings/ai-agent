@@ -1,0 +1,12 @@
+{
+  "id": "job-1771841340400-jt71ozxzj",
+  "type": "chat",
+  "prompt": "What is the weather like",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T10:09:00.400Z",
+  "status": "completed",
+  "result": "I don't have real-time access to current weather conditions. However, I can suggest some ways for you to find out the weather in your area:\n\n1. Check online weather websites: You can check websites such as AccuWeather, Weather.com, or the National Weather Service (NWS) for current weather conditions and forecasts.\n2. Use a mobile app: There are many mobile apps available that provide real-time weather information, such as Dark Sky or Weather Underground.\n3. Tune into local news: Local news stations often provide weather updates during their broadcasts.\n4. Check social media: Many meteorologists and weather agencies share weather updates on social media platforms like Twitter.\n\nIf you'd like to know the weather for a specific location, feel free to let me know the city or region, and I can try to provide general information about the typical weather patterns in that area.",
+  "completedAt": "2026-02-23T10:09:21.744Z",
+  "duration": 19607
+}

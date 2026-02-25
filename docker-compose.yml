@@ -5,26 +5,18 @@ services:
     image: ollama/ollama:latest
     container_name: github-agent-ollama
     ports:
-      - "11434:11434"
+      - "11435:11434"
     volumes:
       - ollama-models:/root/.ollama
     environment:
       - OLLAMA_KEEP_ALIVE=24h
     restart: unless-stopped
-    # Uncomment for NVIDIA GPU support
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: all
-    #           capabilities: [gpu]
 
   github-agent:
     build: .
     container_name: github-agent-app
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - ./jobs:/app/jobs
       - ./memory:/app/memory
@@ -38,9 +30,8 @@ services:
     depends_on:
       - ollama
     restart: unless-stopped
-    command: ["app"]
+    command: ["/usr/local/bin/docker-entrypoint.sh", "app"]
 
-  # Optional: Separate processor service
   processor:
     build: .
     container_name: github-agent-processor
@@ -57,7 +48,7 @@ services:
     depends_on:
       - ollama
     restart: unless-stopped
-    command: ["processor"]
+    command: ["/usr/local/bin/docker-entrypoint.sh", "processor"]
 
 volumes:
   ollama-models:

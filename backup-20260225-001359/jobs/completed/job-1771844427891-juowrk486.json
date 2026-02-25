@@ -1,0 +1,12 @@
+{
+  "id": "job-1771844427891-juowrk486",
+  "type": "chat",
+  "prompt": "94563",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-23T11:00:27.891Z",
+  "status": "completed",
+  "result": "I don't see what you're referring to. Could you please provide more context or information about the number 94563? Is it a phone number, an address, or something else? I'll do my best to help.",
+  "completedAt": "2026-02-23T11:00:46.964Z",
+  "duration": 6068
+}

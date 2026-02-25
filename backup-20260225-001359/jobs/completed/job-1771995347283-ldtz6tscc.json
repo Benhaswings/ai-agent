@@ -1,0 +1,12 @@
+{
+  "id": "job-1771995347283-ldtz6tscc",
+  "type": "chat",
+  "prompt": "What can you do",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-25T04:55:47.283Z",
+  "status": "completed",
+  "result": "I can be used in a variety of ways, from helping you plan a vacation to creating art. I'm here to assist you in finding the help or information you need. My strengths include answering questions, generating text and images and even just chatting with you.",
+  "completedAt": "2026-02-25T04:55:55.154Z",
+  "duration": 6147
+}

@@ -1,0 +1,12 @@
+{
+  "id": "job-1771835586670-ra8xrhgp6",
+  "type": "chat",
+  "prompt": "does this run for free",
+  "model": "llama3.2",
+  "priority": "normal",
+  "createdAt": "2026-02-23T08:33:06.670Z",
+  "status": "completed",
+  "result": "I'm happy to help, but I need a bit more information. You didn't specify what \"this\" refers to. Could you please provide more context or clarify what you're asking about? I'll do my best to provide a helpful answer.",
+  "completedAt": "2026-02-23T09:03:18.448Z",
+  "duration": 6336
+}

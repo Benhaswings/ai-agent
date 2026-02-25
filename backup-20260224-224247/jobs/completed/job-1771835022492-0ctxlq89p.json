@@ -1,0 +1,12 @@
+{
+  "id": "job-1771835022492-0ctxlq89p",
+  "type": "chat",
+  "prompt": "hello",
+  "model": "llama3.2",
+  "priority": "normal",
+  "createdAt": "2026-02-23T08:23:42.492Z",
+  "status": "completed",
+  "result": "Hello! How can I assist you today?",
+  "completedAt": "2026-02-23T08:29:27.381Z",
+  "duration": 1609
+}
