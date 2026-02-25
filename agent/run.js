@@ -110,6 +110,11 @@ async function runAgent() {
 }
 
 async function handleChat(job) {
+  // Check if using Claude
+  if (job.model === 'claude') {
+    return await callClaude(job.prompt);
+  }
+  
   // Try Ollama first, fallback to API
   const ollamaHost = process.env.OLLAMA_HOST || 'http://localhost:11434';
   
@@ -129,6 +134,42 @@ async function handleChat(job) {
   } catch (e) {
     // Fallback: return a placeholder if Ollama not available
     return `[Ollama not available at ${ollamaHost}]\n\nPrompt was: ${job.prompt}`;
+  }
+}
+
+async function callClaude(prompt) {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return 'Error: Claude API key not configured. Please set ANTHROPIC_API_KEY in .env';
+  }
+  
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 4096,
+        messages: [
+          { role: 'user', content: prompt }
+        ]
+      })
+    });
+    
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Claude API error: ${error}`);
+    }
+    
+    const data = await response.json();
+    return data.content[0].text;
+  } catch (e) {
+    console.error('Claude API error:', e.message);
+    return `Error calling Claude: ${e.message}`;
   }
 }
 
