@@ -111,13 +111,18 @@ async function runAgent() {
 }
 
 async function handleChat(job) {
-  // LOCAL ONLY - No paid APIs
-  // If someone tries to use paid models, default to local llama3.2
-  if (job.model === 'claude' || job.model === 'nvidia') {
-    console.log(`Model ${job.model} requested but using local llama3.2 instead (no paid APIs)`);
-    job.model = 'llama3.2';
+  // Check if using paid APIs (only when explicitly selected)
+  if (job.model === 'claude') {
+    console.log('Using Claude API (paid) - as explicitly requested');
+    return await callClaude(job.prompt);
   }
   
+  if (job.model === 'nvidia') {
+    console.log('Using NVIDIA API (paid) - as explicitly requested');
+    return await callNVIDIA(job.prompt);
+  }
+  
+  // Default: Use local Ollama (FREE)
   const ollamaHost = process.env.OLLAMA_HOST || 'http://localhost:11434';
   
   try {

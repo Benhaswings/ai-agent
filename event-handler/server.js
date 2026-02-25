@@ -580,6 +580,16 @@ if (bot && TELEGRAM_CHAT_ID) {
           bot.sendMessage(chatId, '✅ Reset to default model (llama3.2)');
           return;
           
+        case '/claude':
+          userModels[chatId] = 'claude';
+          bot.sendMessage(chatId, '🤖 Switched to Claude 3.5 Sonnet (PAID API)\n\n⚠️ This uses your Anthropic API key. Use sparingly.');
+          return;
+          
+        case '/nvidia':
+          userModels[chatId] = 'nvidia';
+          bot.sendMessage(chatId, '🟢 Switched to NVIDIA Llama 3.1 405B (PAID API)\n\n⚠️ This uses your NVIDIA API key. Use sparingly.');
+          return;
+          
         case '/menu':
         case '/start':
           const currentModel = userModels[chatId] || 'llama3.2';
@@ -603,6 +613,10 @@ if (bot && TELEGRAM_CHAT_ID) {
                     { text: '🦙 Default', callback_data: 'model:llama3.2' }
                   ],
                   [
+                    { text: '🤖 Claude (Paid)', callback_data: 'model:claude' },
+                    { text: '🟢 NVIDIA (Paid)', callback_data: 'model:nvidia' }
+                  ],
+                  [
                     { text: '🔍 Web Search', callback_data: 'action:search' },
                     { text: '📋 All Models', callback_data: 'action:models' }
                   ],
@@ -622,12 +636,15 @@ if (bot && TELEGRAM_CHAT_ID) {
             `*Quick Commands:*\n` +
             `/menu - Show interactive menu\n` +
             `/models - List all models\n\n` +
-            `*Model Selection:*\n` +
+            `*Model Selection (Local - FREE):*\n` +
             `/fast - Use fast model (1B)\n` +
             `/code - Use coding model (phi3)\n` +
             `/smart - Use reasoning model (qwen)\n` +
             `/tiny - Use lightning fast model\n` +
             `/default - Reset to default\n\n` +
+            `*Premium Models (Paid API - Use sparingly):*\n` +
+            `/claude - Claude 3.5 Sonnet (Anthropic)\n` +
+            `/nvidia - Llama 3.1 405B (NVIDIA)\n\n` +
             `*Web Search:*\n` +
             `/search <query> - Search the web\n` +
             `Example: /search latest AI news\n\n` +

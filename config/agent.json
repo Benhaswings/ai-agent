@@ -48,6 +48,24 @@
       "size": "600MB",
       "speed": "very-fast",
       "bestFor": "speed"
+    },
+    {
+      "id": "claude",
+      "name": "Claude 3.5 Sonnet",
+      "description": "Anthropic AI - Best quality (PAID API - use /claude)",
+      "size": "API",
+      "speed": "fast",
+      "bestFor": "quality",
+      "paid": true
+    },
+    {
+      "id": "nvidia",
+      "name": "NVIDIA Llama 3.1 405B",
+      "description": "NVIDIA API - Most powerful (PAID API - use /nvidia)",
+      "size": "API",
+      "speed": "fast",
+      "bestFor": "power",
+      "paid": true
     }
   ]
 }
