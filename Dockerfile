@@ -1,19 +1,17 @@
 # Multi-stage build for Ollama + GitHub Agent
 
-# Stage 1: Ollama base
-FROM ollama/ollama:latest as ollama-base
+FROM ollama/ollama:latest
 
-# Install Node.js and npm
+# Install Node.js, npm, and core utilities
 RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
+    git \
+    coreutils \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-# Stage 2: Application
-FROM ollama-base
 
 # Set working directory
 WORKDIR /app
@@ -31,6 +29,11 @@ RUN cd event-handler && npm install
 # Copy application code
 COPY . .
 
+# Copy and set up entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh && \
+    sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh
+
 # Create necessary directories
 RUN mkdir -p jobs/pending jobs/processing jobs/completed jobs/failed memory config
 
@@ -38,11 +41,10 @@ RUN mkdir -p jobs/pending jobs/processing jobs/completed jobs/failed memory conf
 EXPOSE 3000 11434
 
 # Environment variables
-ENV OLLAMA_HOST=http://localhost:11434
+ENV OLLAMA_HOST=http://ollama:11434
 ENV NODE_ENV=production
+ENV PATH="/usr/local/bin:${PATH}"
 
-# Start script
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-ENTRYPOINT ["docker-entrypoint.sh"]
+# Start with entrypoint
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["app"]

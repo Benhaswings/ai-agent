@@ -10,7 +10,7 @@ const { addToMemory, getContext, formatContext, clearMemory, getMemoryStats } = 
 const app = express();
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPO = process.env.GITHUB_REPO || 'YOURNAME/github-agent';
 

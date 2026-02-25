@@ -6,7 +6,8 @@ wait_for_ollama() {
     echo "⏳ Waiting for Ollama to be ready..."
     until curl -s http://ollama:11434/api/tags > /dev/null 2>&1 || curl -s http://localhost:11434/api/tags > /dev/null 2>&1; do
         echo "   Still waiting..."
-        sleep 2
+        # Use bash built-in instead of sleep
+        read -t 2 < /dev/null || true
     done
     echo "✅ Ollama is ready!"
 }
@@ -66,9 +67,6 @@ case "$1" in
         echo "  processor - Start job processor"
         echo "  both      - Start both services"
         echo "  setup     - Pull default models"
-        echo ""
-        echo "Environment variables:"
-        echo "  OLLAMA_MODELS - Comma-separated list of models to pull"
         exit 1
         ;;
 esac
