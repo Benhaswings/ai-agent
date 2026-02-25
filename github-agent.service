@@ -1,0 +1,15 @@
+[Unit]
+Description=GitHub Agent Auto-Start
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=forking
+User=ben
+WorkingDirectory=/home/ben/github-agent
+ExecStart=/home/ben/github-agent/autostart.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
