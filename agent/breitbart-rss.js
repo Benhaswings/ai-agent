@@ -21,7 +21,17 @@ const KEYWORDS = [
 function loadState() {
   try {
     if (fs.existsSync(RSS_FILE)) {
-      return JSON.parse(fs.readFileSync(RSS_FILE, 'utf8'));
+      const state = JSON.parse(fs.readFileSync(RSS_FILE, 'utf8'));
+      // Normalize postedGuids to strings (in case old data has objects)
+      if (state.postedGuids && Array.isArray(state.postedGuids)) {
+        state.postedGuids = state.postedGuids.map(guid => {
+          if (typeof guid === 'object') {
+            return guid['#text'] || guid.toString();
+          }
+          return guid;
+        });
+      }
+      return state;
     }
   } catch (e) {
     console.error('Error loading state:', e.message);
@@ -78,13 +88,21 @@ function parseRSS(xmlData) {
     if (result.rss && result.rss.channel) {
       const channel = result.rss.channel;
       const items = Array.isArray(channel.item) ? channel.item : [channel.item];
-      return items.filter(item => item).map(item => ({
-        title: item.title || 'No title',
-        link: item.link || '',
-        description: item.description || '',
-        guid: item.guid || item.link || '',
-        pubDate: item.pubDate || new Date().toISOString()
-      }));
+      return items.filter(item => item).map(item => {
+        // Extract GUID as string (handle both object and string formats)
+        let guid = item.guid || item.link || '';
+        if (typeof guid === 'object') {
+          guid = guid['#text'] || guid.toString();
+        }
+        
+        return {
+          title: item.title || 'No title',
+          link: item.link || '',
+          description: item.description || '',
+          guid: guid,
+          pubDate: item.pubDate || new Date().toISOString()
+        };
+      });
     }
     
     return [];
