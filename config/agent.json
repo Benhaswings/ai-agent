@@ -52,10 +52,18 @@
     {
       "id": "claude",
       "name": "Claude 3.5 Sonnet",
-      "description": "Anthropic - Best quality responses",
+      "description": "Anthropic AI - Best quality via API",
       "size": "API",
       "speed": "fast",
       "bestFor": "quality"
+    },
+    {
+      "id": "nvidia",
+      "name": "NVIDIA Llama 3.1 405B",
+      "description": "NVIDIA API - Most powerful model",
+      "size": "API",
+      "speed": "fast",
+      "bestFor": "power"
     }
   ]
 }

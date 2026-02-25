@@ -115,6 +115,11 @@ async function handleChat(job) {
     return await callClaude(job.prompt);
   }
   
+  // Check if using NVIDIA
+  if (job.model === 'nvidia') {
+    return await callNVIDIA(job.prompt);
+  }
+  
   // Try Ollama first, fallback to API
   const ollamaHost = process.env.OLLAMA_HOST || 'http://localhost:11434';
   
@@ -170,6 +175,43 @@ async function callClaude(prompt) {
   } catch (e) {
     console.error('Claude API error:', e.message);
     return `Error calling Claude: ${e.message}`;
+  }
+}
+
+async function callNVIDIA(prompt) {
+  const apiKey = process.env.NVIDIA_API_KEY;
+  if (!apiKey) {
+    return 'Error: NVIDIA API key not configured. Please set NVIDIA_API_KEY in .env';
+  }
+  
+  try {
+    const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'meta/llama-3.1-405b-instruct',
+        messages: [
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.7,
+        top_p: 0.9,
+        max_tokens: 4096
+      })
+    });
+    
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`NVIDIA API error: ${error}`);
+    }
+    
+    const data = await response.json();
+    return data.choices[0].message.content;
+  } catch (e) {
+    console.error('NVIDIA API error:', e.message);
+    return `Error calling NVIDIA: ${e.message}`;
   }
 }
 
