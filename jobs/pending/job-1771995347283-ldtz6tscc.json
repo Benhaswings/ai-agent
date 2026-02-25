@@ -1,0 +1,9 @@
+{
+  "id": "job-1771995347283-ldtz6tscc",
+  "type": "chat",
+  "prompt": "What can you do",
+  "model": "llama3.2",
+  "source": "telegram",
+  "createdAt": "2026-02-25T04:55:47.283Z",
+  "status": "pending"
+}
