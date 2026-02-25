@@ -1,0 +1,11 @@
+{
+  "id": "job-1771871234799-1skkmeshl",
+  "type": "chat",
+  "prompt": "Hey",
+  "model": "qwen2.5:3b",
+  "source": "telegram",
+  "createdAt": "2026-02-23T18:27:14.799Z",
+  "status": "completed",
+  "completedAt": "2026-02-23T18:27:17.047Z",
+  "duration": 54
+}
