@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const { webSearch } = require('./websearch');
+const { addToMemory } = require('./memory');
 
 // Telegram notification setup
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -265,16 +266,10 @@ async function handleGeneric(job) {
 }
 
 function updateMemory(job, result) {
-  const memoryPath = path.join(__dirname, '..', 'memory', 'conversations.jsonl');
-  const entry = {
-    timestamp: new Date().toISOString(),
-    jobId: JOB_ID,
-    type: job.type,
-    prompt: job.prompt.substring(0, 200), // Truncate
-    result: typeof result === 'string' ? result.substring(0, 500) : 'Complex result'
-  };
-  
-  fs.appendFileSync(memoryPath, JSON.stringify(entry) + '\n');
+  // Use the new memory system for chat jobs from Telegram
+  if (job.source === 'telegram' && job.chatId) {
+    addToMemory(job.chatId, 'assistant', result, job.model);
+  }
 }
 
 runAgent();

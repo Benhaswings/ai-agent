@@ -5,6 +5,7 @@ const { execSync } = require('child_process');
 const { subscribe, unsubscribe, listSubscriptions, checkAllFeeds } = require('../agent/rss');
 const { checkDHSPressReleases: checkDHSRSS, manualCheck, DHS_CHANNEL } = require('../agent/dhs-rss');
 const { checkBreitbartRSS, manualCheckBreitbart, BREITBART_CHANNEL } = require('../agent/breitbart-rss');
+const { addToMemory, getContext, formatContext, clearMemory, getMemoryStats } = require('../agent/memory');
 
 const app = express();
 app.use(express.json());
@@ -636,6 +637,9 @@ if (bot && TELEGRAM_CHAT_ID) {
             `/unrss <number> - Unsubscribe from feed\n` +
             `/dhs - Check DHS press releases manually\n` +
             `/breitbart - Check Breitbart DHS/CBP/FBI articles\n\n` +
+            `*Memory:*\n` +
+            `/memory - Show conversation memory stats\n` +
+            `/clearmemory - Clear conversation history\n\n` +
             `Just type any message to chat!`,
             { parse_mode: 'Markdown' }
           );
@@ -726,6 +730,22 @@ if (bot && TELEGRAM_CHAT_ID) {
         return;
       }
       
+      // Memory commands
+      if (command === '/clearmemory' || command === '/clear') {
+        if (clearMemory(chatId)) {
+          bot.sendMessage(chatId, '🧹 Memory cleared! I\'ve forgotten our previous conversation.');
+        } else {
+          bot.sendMessage(chatId, 'ℹ️ No memory to clear.');
+        }
+        return;
+      }
+      
+      if (command === '/memory') {
+        const stats = getMemoryStats(chatId);
+        bot.sendMessage(chatId, `🧠 Memory Stats:\n\nMessages stored: ${stats.messageCount}\nMemory file size: ${(stats.fileSize / 1024).toFixed(2)} KB\n\nI remember our last ${Math.min(stats.messageCount, 10)} messages in our conversation.`, { parse_mode: 'Markdown' });
+        return;
+      }
+      
       // Unknown command
       if (command !== '/start') {
         bot.sendMessage(chatId, '❓ Unknown command. Use /help for available commands');
@@ -736,14 +756,28 @@ if (bot && TELEGRAM_CHAT_ID) {
     // Get user's preferred model or default
     const selectedModel = userModels[chatId] || 'llama3.2';
     
+    // Get conversation context from memory
+    const context = getContext(chatId);
+    const contextText = formatContext(context);
+    
+    // Build prompt with context
+    const promptWithContext = contextText 
+      ? `Previous conversation context:${contextText}\nCurrent message: ${text}\n\nPlease respond naturally, taking into account the previous conversation if relevant.`
+      : text;
+    
+    // Save user message to memory
+    addToMemory(chatId, 'user', text, selectedModel);
+    
     // Create job from message
     const jobId = `job-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const job = {
       id: jobId,
       type: 'chat',
-      prompt: text,
+      prompt: promptWithContext,
+      originalPrompt: text, // Store original without context
       model: selectedModel,
       source: 'telegram',
+      chatId: chatId,
       createdAt: new Date().toISOString(),
       status: 'pending'
     };
