@@ -1,0 +1,11 @@
+{
+  "id": "job-1772027605335-rk1793x21",
+  "type": "chat",
+  "prompt": "Previous conversation context:\n\n--- Previous Conversation ---\nUser: Hello\nAssistant: [Ollama not available at http://ollama:11434]\n\nPrompt was: Hello\nUser: Hey there\nAssistant: [Ollama not available at http://ollama:11434]\n\nPrompt was: Previous conversation context:\n\n--- Previous Conversation ---\nUser: Hello\nAssistant: [Ollama not available at http://ollama:11434]\n\nPrompt was: Hello\n--- End of Context ---\n\n\nCurrent message: Hey there\n\nPlease respond naturally, taking into account the previous conversation if relevant.\nUser: My name is Ben\nAssistant: [Ollama not available at http://ollama:11434]\n\nPrompt was: Previous conversation context:\n\n--- Previous Conversation ---\nUser: Hello\nAssistant: [Ollama not available at http://ollama:11434]\n\nPrompt was: Hello\nUser: Hey there\nAssistant: [Ollama not available at http://ollama:11434]\n\nPrompt was: Previous conversation context:\n\n--- Previous Conversation ---\nUser: Hello\nAssistant: [Ollama not available at http://ollama:11434]\n\nPrompt was: Hello\n--- End of Context ---\n\n\nCurrent message: Hey there\n\nPlease respond naturally, taking into account the previous conversation if relevant.\n--- End of Context ---\n\n\nCurrent message: My name is Ben\n\nPlease respond naturally, taking into account the previous conversation if relevant.\n--- End of Context ---\n\n\nCurrent message: Hey\n\nPlease respond naturally, taking into account the previous conversation if relevant.",
+  "originalPrompt": "Hey",
+  "model": "llama3.2",
+  "source": "telegram",
+  "chatId": 1569185905,
+  "createdAt": "2026-02-25T13:53:25.335Z",
+  "status": "pending"
+}
